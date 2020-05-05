@@ -1,0 +1,27 @@
+service: fastapi
+app: fastapi
+org: mc001
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.7
+  region: eu-central-1
+  environment:
+    FAUNADB_SECRET: ${param:FAUNADB_SECRET}
+    TIMEZONE: ${param:TIMEZONE}
+
+functions:
+  app:
+    handler: asgi.handler
+    timeout: 30
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerFile: ./Dockerfile
